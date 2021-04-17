@@ -2,6 +2,7 @@ package nl.marksoelman.cryptoexchangeslippageanalyser;
 
 import com.google.common.math.Quantiles;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import nl.marksoelman.cryptoexchangeslippageanalyser.model.Instrument;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+@Service @Slf4j
 public class CSVExporter {
 
     @Value("${core.export.file}")
@@ -59,6 +60,12 @@ public class CSVExporter {
                     });
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -151,6 +151,10 @@ public class SlippageRunner {
 
             totalAssetsBought += afterFee(amountToPurchase);
             quoteToSpend -= amountToPurchase * availablePrice;
+
+            if(i == orderBook.getAsks().size()-1 && quoteToSpend > 0)
+                log.warn("Could not fill all orders, since entire order book was bought up. Consider increasing order" +
+                        " book depth.");
         }
 
         double expectedBought = totalUsdToSpend / quoteUsdValue / orderBook.getMidpointPrice();
@@ -177,12 +181,15 @@ public class SlippageRunner {
 
             quoteObtained += afterFee(amountToSell * availablePrice);
             baseToSell -= amountToSell;
+
+            if(i == orderBook.getBids().size()-1 && baseToSell > 0)
+                log.warn("Could not fill all orders, since entire order book was sold out. Consider increasing order" +
+                        " book depth.");
         }
 
         double slippage = (1 - quoteObtained / quoteToObtainExpected);
 //        log.error("On instrument: " + orderBook.getInstrument() + ", slippage SELL=" +
 //                String.format("%.2f", slippage*100) + "%.");
-
         return slippage;
     }
 

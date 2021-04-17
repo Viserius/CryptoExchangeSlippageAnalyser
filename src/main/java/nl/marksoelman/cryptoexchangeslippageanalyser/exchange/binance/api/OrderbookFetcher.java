@@ -9,6 +9,7 @@ import nl.marksoelman.cryptoexchangeslippageanalyser.model.OrderBook;
 import nl.marksoelman.cryptoexchangeslippageanalyser.model.OrderBookAsk;
 import nl.marksoelman.cryptoexchangeslippageanalyser.model.OrderBookBid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -21,9 +22,12 @@ public class OrderbookFetcher {
     @Autowired
     BinanceRequestService binanceRequestService;
 
+    @Value("${binance.orderbook-depth-to-fetch}")
+    private Integer orderBookDepth;
+
     public Mono<OrderBook> getOrderBook(Instrument instrument) {
         return binanceRequestService.getSingle(
-                "/api/v3/depth?symbol=" + instrument.getSymbolConcat(), OrderBookDepth.class)
+                "/api/v3/depth?symbol=" + instrument.getSymbolConcat() + "&limit=" + orderBookDepth, OrderBookDepth.class)
                 .map(orderBookDepth -> {
                     List<OrderBookBid> bids = orderBookDepth.getBids().stream()
                             .map(bbid -> new OrderBookBid(

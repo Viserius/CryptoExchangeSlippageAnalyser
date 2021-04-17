@@ -37,4 +37,4 @@ out/
 .vscode/
 
 # Application-specific
-slippages.csv
+slippages*
